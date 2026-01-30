@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Custom Big Clock</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#000000" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+
+      :root {
+        --bg-color: #000000;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.6);
+        --accent: #b2a4ff;
+        --glass-border: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Outfit",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+
+      .dashboard {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-areas: 
+          "top top top"
+          "widget extra calendar";
+        grid-template-rows: auto 1fr;
+        grid-template-columns: 1fr 19vw 32vw;
+        gap: 0;
+        background: var(--bg-color);
+      }
+
+      .top-section {
+        grid-area: top;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 0;
+        width: 100%;
+        overflow: hidden;
+        z-index: 10;
+        border-bottom: 3px solid #1a1a1a;
+      }
+
+      .date-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+      }
+
+      #clock {
+
+        margin-left: -6px;
+
+        font-family: "Inter", sans-serif;
+        font-variant-numeric: tabular-nums;
+        font-size: 30.5vw;
+        font-weight: 700;
+        line-height: 0.78;
+        white-space: nowrap;
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        transition: font-size 0.5s ease-in-out;
+      }
+
+      #clock.offline-clock {
+        font-size: 26.5vw;
+      }
+
+      #clock span {
+        font-family: "Inter", sans-serif;
+        letter-spacing: -1.5vw;
+      }
+
+      .clock-sep {
+        /* color: var(--accent); */
+        margin: 0 0;
+        position: relative;
+        top: -1vw; /* Adjust colon vertical position */
+        font-weight: 400;
+        /* opacity: 0.8; */
+      }
+
+      .widget-section {
+        grid-area: widget;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        overflow: hidden;
+      }
+
+      .extra-section {
+        grid-area: extra;
+        background: #000;
+        border-left: 3px solid #1a1a1a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 0;
+      }
+
+      .map-frame-wrapper {
+        width: 100%;
+        height: 100%;
+        /* border-radius: 6px; */
+        overflow: hidden;
+        position: relative;
+        background: #000000;
+      }
+
+      .map-frame-wrapper iframe {
+        position: absolute;
+        /* Zoom effect */
+
+        transform-origin: top center;
+
+        width: 100%; 
+        height: 100%;
+        left: 0;
+        /* top: -20px;
+        height: calc(100% + 20px); */
+        border: none;
+        pointer-events: auto;
+        filter: brightness(1) saturate(0.5);
+      }
+
+
+
+      #numeric-date {
+        font-family: "Inter", sans-serif;
+        font-variant-numeric: tabular-nums;
+        font-size: 47.2px;
+        font-weight: 600;
+        line-height: 0.9;
+        color: var(--text-primary);
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .battery-container {
+        height: 22px;
+        display: flex;
+        align-items: center;
+        gap: 0px;
+        color: var(--text-secondary);
+        font-size: clamp(1rem, 2.5vw, 1.5rem);
+        font-weight: 600;
+        opacity: 0.7;
+        transition: opacity 0.5s;
+      }
+
+      .status-container {
+        position: fixed;
+        top: 0px;
+        right: 4px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 3000;
+      }
+
+      .calendar-section {
+        aspect-ratio: 1;
+        grid-area: calendar;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #000;
+        padding: 3px;
+        border-left: 3px solid #1a1a1a;
+      }
+
+      .month-name {
+        color: var(--accent);
+        text-transform: uppercase;
+        font-size: 19.3px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        line-height: 1;
+        margin-bottom: 2.5px;
+        display: block;
+        text-align: right;
+      }
+
+
+      .calendar-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3.6px;
+        /* gap: 0; */
+        text-align: center;
+      }
+
+      .day-header {
+        color: var(--text-secondary);
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 3.3px;
+      }
+
+      .day {
+        font-size: 19.2px;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        position: relative;
+      }
+
+      .day.other-month {
+        opacity: 0.35;
+      }
+
+      .day.weekend,
+      .day.weekend.other-month { 
+        /* color: var(--text-secondary); */
+
+        color: var(--accent);
+      }
+      
+      .day.weekend.other-month { 
+        /* color: var(--text-secondary); */
+        opacity: 0.51;
+
+      }
+
+      .day.today,
+      .day.weekend.today {
+        color: var(--bg-color);
+        font-weight: 700;
+        z-index: 10;
+      }
+
+      .day.today::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--text-primary);
+        border-radius: 50%;
+        transform: scale(1.15);
+        z-index: -1;
+      }
+
+      
+      .offline-message {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--text-secondary);
+        text-align: center;
+        height: 100%;
+        width: 100%;
+        opacity: 0.6;
+      }
+
+      .offline-message span {
+        font-size: 4vw;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .offline-icon {
+        font-size: 6vw;
+      }
+      .weather-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5vh;
+        color: var(--text-primary);
+        text-align: center;
+        transition: opacity 0.5s, filter 0.5s;
+      }
+
+      .weather-city {
+        margin-top: 1.5vh;
+        font-size: 1.5vw;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+      }
+
+      .weather-icon {
+        /* margin-top: 1.5vh; */
+        font-size: 10vw;
+        line-height: 1;
+      }
+
+      .weather-temp {
+        margin-top: -0.5vh;
+        font-size: 8vw;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        line-height: 1;
+      }
+
+      
+
+      .weather-desc {
+        margin-top: 0.8vh;
+        font-size: 2.4vw;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      .weather-range {
+        margin-top: 2.0vh;
+        font-size: 3.5vw;
+        font-weight: 600;
+        display: flex;
+        gap: 2.5vw;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .temp-max { color: #f87171; }
+      .temp-min { color: #60a5fa; }
+
+      /* Sleep Mode Styles */
+      .sleep-mode {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #000;
+        z-index: 2000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .sleep-clock {
+        font-family: "Inter", sans-serif;
+        font-variant-numeric: tabular-nums;
+        font-size: 38vw; 
+        font-weight: 700;
+        line-height: 0.78; /* Match main clock */
+        color: rgba(255, 255, 255, 0.5);
+        white-space: nowrap;
+        display: flex;
+        align-items: baseline; /* Match main clock */
+        justify-content: center;
+        transition: opacity 0.3s;
+      }
+
+      .sleep-clock span {
+        font-family: "Inter", sans-serif;
+        letter-spacing: -1.5vw; /* Match main clock */
+      }
+
+      .sleep-clock .clock-sep {
+        font-weight: 300;
+        position: relative;
+        top: -1.5vw;
+        /* opacity: 0.5; */
+        margin: 0 -0.5vw;
+      }
+
+
+    </style>
+  </head>
+
+
+
+
+
+
+
+  <body>
+    <div id="sleepMode" class="sleep-mode" onclick="Dashboard.dismissSleepMode()">
+      <div class="sleep-clock">
+        <span id="sleepHours">00</span>
+        <span class="clock-sep">:</span>
+        <span id="sleepMinutes">00</span>
+      </div>
+    </div>
+  
+  
+    <div class="status-container">
+      <div id="batteryContainer" class="battery-container">
+        <span id="batteryIcon"></span>
+        <span id="batteryLevel">--%</span>
+      </div>
+    </div>
+  
+  
+    <div class="dashboard">
+  
+      <div class="top-section" onclick="Dashboard.toggleFullscreen()">
+  
+
+          <div id="clock" class="clock">
+            <span id="hours">00</span>
+            <span class="clock-sep">:</span>
+            <span id="minutes">00</span>
+          </div>
+  
+          <div class="date-section">
+            <span id="monthName" class="month-name">Month</span>
+            <div id="numeric-date">
+              00.00
+            </div>
+          </div>
+  
+
+  
+      </div>
+  
+  
+      <div class="widget-section">
+
+        <div id="offlineMessage" class="offline-message">
+          <div class="offline-icon">📡</div>
+          <span>no connection</span>
+        </div>
+
+        <div id="mapWrapper" class="map-frame-wrapper">
+          <iframe id="mapIframe" src="https://alerts.in.ua/mini" scrolling="no"></iframe>
+        </div>
+
+      </div>
+  
+  
+      <div class="extra-section">
+        <div id="weather" class="weather-container">
+          <div id="weatherCity" class="weather-city">Novoiavorivsk</div>
+          <div id="weatherIcon" class="weather-icon">--</div>
+          <div id="weatherTemp" class="weather-temp">--°</div>
+          <div id="weatherDesc" class="weather-desc">-----</div>
+          <div class="weather-range">
+            <span id="weatherMax" class="temp-max">--°</span>
+            <span id="weatherMin" class="temp-min">--°</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="calendar-section">
+  
+        <div class="calendar">
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+
+      </div>
+  
+  
+  
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script>
+      const Dashboard = {
+        lastDay: null,
+        lastHours: null,
+        lastMinutes: null,
+        weatherTimeout: null,
+        sleepDismissedUntil: 0,
+        debugSleep: false, // Встановіть false для роботи за розкладом (2:00-8:00)
+
+        config: {
+          city: "Novoiavorivsk",
+          lat: 49.93,
+          lon: 23.57,
+          weatherInterval: 600000, // 10 minutes
+        },
+
+        init() {
+          this.initBattery();
+          this.checkConnectivity();
+          this.fetchWeather();
+          
+          // Self-correcting tick to sync with system seconds
+          const tick = () => {
+            this.update();
+            const now = new Date();
+            const delay = 1000 - now.getMilliseconds();
+            setTimeout(tick, delay);
+          };
+          
+          tick();
+          setInterval(() => this.checkConnectivity(), 15000);
+        },
+
+        update() {
+          const now = new Date();
+          const h = now.getHours();
+          const m = now.getMinutes();
+          const d = now.getDate();
+          const pad = (n) => String(n).padStart(2, "0");
+
+          // Update date and calendar only on day change
+          if (this.lastDay !== d) {
+            this.lastDay = d;
+            this.renderCalendar(now);
+            document.getElementById("numeric-date").textContent =
+              `${pad(d)}.${pad(now.getMonth() + 1)}`;
+          }
+
+          // Check Sleep Mode (2:00 - 8:00)
+          const isSleepTime = (h >= 2 && h < 8 || this.debugSleep) && Date.now() > this.sleepDismissedUntil;
+          const sleepMode = document.getElementById("sleepMode");
+          if (isSleepTime && sleepMode.style.display !== "flex") {
+            sleepMode.style.display = "flex";
+          } else if (!isSleepTime && sleepMode.style.display !== "none") {
+            sleepMode.style.display = "none";
+          }
+
+          // Update hours only on change
+          if (this.lastHours !== h) {
+            this.lastHours = h;
+            const hStr = pad(h);
+            document.getElementById("hours").textContent = hStr;
+            document.getElementById("sleepHours").textContent = hStr;
+          }
+
+          // Update minutes only on change
+          if (this.lastMinutes !== m) {
+            this.lastMinutes = m;
+            const mStr = pad(m);
+            document.getElementById("minutes").textContent = mStr;
+            document.getElementById("sleepMinutes").textContent = mStr;
+          }
+        },
+
+        renderCalendar(now) {
+          const year = now.getFullYear();
+          const month = now.getMonth();
+          const today = now.getDate();
+          const monthsEN = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+          const daysEN = ["M", "T", "W", "T", "F", "S", "S"];
+
+          document.getElementById("monthName").textContent = monthsEN[month];
+
+          const grid = document.getElementById("calendarGrid");
+          grid.innerHTML = "";
+
+          // Render Day Headers (M, T, W...)
+          daysEN.forEach((day, i) => {
+            const header = document.createElement("div");
+            header.className = `day-header ${i >= 5 ? "weekend" : ""}`;
+            header.textContent = day;
+            grid.appendChild(header);
+          });
+
+          // Calculation logic for 6x7 grid (42 days)
+          const firstDayOfMonth = new Date(year, month, 1).getDay();
+          // Adjust for Monday start (0=Sun, 1=Mon...6=Sat) -> (0=Mon...6=Sun)
+          const offset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+          
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const daysInPrevMonth = new Date(year, month, 0).getDate();
+          
+          const totalCells = 42; // Always 6 rows * 7 days
+
+          // Previous month days
+          for (let i = offset - 1; i >= 0; i--) {
+            const dayDiv = document.createElement("div");
+            const dayVal = daysInPrevMonth - i;
+            const dayOfWeek = (offset - 1 - i) % 7;
+            dayDiv.className = `day other-month ${dayOfWeek >= 5 ? "weekend" : ""}`;
+            dayDiv.textContent = dayVal;
+            grid.appendChild(dayDiv);
+          }
+
+          // Current month days
+          for (let i = 1; i <= daysInMonth; i++) {
+            const dayDiv = document.createElement("div");
+            const dayOfWeek = (offset + i - 1) % 7;
+            dayDiv.className = `day ${dayOfWeek >= 5 ? "weekend" : ""} ${i === today ? "today" : ""}`;
+            dayDiv.textContent = i;
+            grid.appendChild(dayDiv);
+          }
+
+          // Next month days
+          const remainingCells = totalCells - (offset + daysInMonth);
+          for (let i = 1; i <= remainingCells; i++) {
+            const dayDiv = document.createElement("div");
+            const dayOfWeek = (offset + daysInMonth + i - 1) % 7;
+            dayDiv.className = `day other-month ${dayOfWeek >= 5 ? "weekend" : ""}`;
+            dayDiv.textContent = i;
+            grid.appendChild(dayDiv);
+          }
+        },
+
+
+        async initBattery() {
+          if (!("getBattery" in navigator)) return;
+          try {
+            const battery = await navigator.getBattery();
+            const update = () => {
+              const level = Math.round(battery.level * 100);
+              const batteryLevel = document.getElementById("batteryLevel");
+              const batteryIcon = document.getElementById("batteryIcon");
+
+              batteryLevel.textContent = `${level}%`;
+              batteryIcon.textContent = battery.charging ? "⚡" : "";
+
+              if (level === 100) {
+                batteryLevel.style.color = "#4ade80"; // Зелений для 100%
+              } else if (level <= 10) {
+                batteryLevel.style.color = "#f87171"; // Червоний для низького заряду
+              } else {
+                batteryLevel.style.color = "var(--text-secondary)";
+              }
+
+              document.getElementById("batteryContainer");
+            };
+            battery.addEventListener("levelchange", update);
+            battery.addEventListener("chargingchange", update);
+            update();
+          } catch (e) {
+            console.error(e);
+          }
+        },
+
+        toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        },
+
+        dismissSleepMode() {
+          // Dismiss sleep mode for 1 hour if tapped
+          this.sleepDismissedUntil = Date.now() + (60 * 60 * 1000);
+          document.getElementById("sleepMode").style.display = "none";
+        },
+
+
+
+        async checkConnectivity() {
+          const mapWrapper = document.getElementById("mapWrapper");
+          const offlineMessage = document.getElementById("offlineMessage");
+          const weatherWidget = document.getElementById("weather");
+          const iframe = document.getElementById("mapIframe");
+          const clock = document.getElementById("clock");
+          
+          let currentlyOnline = false;
+
+          if (navigator.onLine) {
+            try {
+              // Using a small fetch to confirm actual internet access
+              const signal = AbortSignal.timeout ? AbortSignal.timeout(5000) : null;
+              await fetch("https://www.google.com/favicon.ico", {
+                mode: 'no-cors',
+                cache: 'no-store',
+                signal: signal
+              });
+              currentlyOnline = true;
+            } catch (e) {
+              currentlyOnline = false;
+            }
+          }
+
+          if (currentlyOnline) {
+            weatherWidget.style.opacity = "1";
+            weatherWidget.style.filter = "none";
+            clock.classList.remove("offline-clock");
+
+            if (mapWrapper.style.display === "none") {
+              mapWrapper.style.display = "block";
+              offlineMessage.style.display = "none";
+              // Reload iframe to ensure map is fresh
+              iframe.src = iframe.src; 
+              this.fetchWeather();
+            }
+            
+          } else {
+            weatherWidget.style.opacity = "0.4";
+            weatherWidget.style.filter = "grayscale(1)";
+            clock.classList.add("offline-clock");
+            mapWrapper.style.display = "none";
+            offlineMessage.style.display = "flex";
+          }
+        },
+
+        async fetchWeather() {
+          if (this.weatherTimeout) clearTimeout(this.weatherTimeout);
+          
+          try {
+            const res = await fetch(
+              `https://api.open-meteo.com/v1/forecast?latitude=${this.config.lat}&longitude=${this.config.lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`
+            );
+            const data = await res.json();
+            if (data.current_weather && data.daily) {
+              this.lastWeatherData = data;
+              this.updateWeather(data);
+            }
+          } catch (e) {
+            console.error("Weather fetch failed", e);
+          }
+          this.weatherTimeout = setTimeout(() => this.fetchWeather(), this.config.weatherInterval);
+        },
+
+        updateWeather(data) {
+          const current = data.current_weather;
+          const daily = data.daily;
+          const temp = Math.round(current.temperature);
+          const tempMax = Math.round(daily.temperature_2m_max[0]);
+          const tempMin = Math.round(daily.temperature_2m_min[0]);
+          const code = current.weathercode;
+          
+          document.getElementById("weatherTemp").textContent = `${temp}°`;
+          document.getElementById("weatherMax").textContent = `↑${tempMax}°`;
+          document.getElementById("weatherMin").textContent = `↓${tempMin}°`;
+          document.getElementById("weatherCity").textContent = this.config.city;
+          
+          const iconMap = {
+            0: { icon: "☀️", desc: "Clear" },
+            1: { icon: "🌤️", desc: "Mainly Clear" },
+            2: { icon: "⛅", desc: "Partly Cloudy" },
+            3: { icon: "☁️", desc: "Overcast" },
+            45: { icon: "🌫️", desc: "Fog" },
+            48: { icon: "🌫️", desc: "Dep. Rime Fog" },
+            51: { icon: "🌦️", desc: "Light Drizzle" },
+            53: { icon: "🌦️", desc: "Mod. Drizzle" },
+            55: { icon: "🌦️", desc: "Dense Drizzle" },
+            61: { icon: "🌧️", desc: "Slight Rain" },
+            63: { icon: "🌧️", desc: "Moderate Rain" },
+            65: { icon: "🌧️", desc: "Heavy Rain" },
+            71: { icon: "❄️", desc: "Slight Snow" },
+            73: { icon: "❄️", desc: "Moderate Snow" },
+            75: { icon: "❄️", desc: "Heavy Snow" },
+            77: { icon: "❄️", desc: "Snow grains" },
+            80: { icon: "🌦️", desc: "Slight Showers" },
+            81: { icon: "🌦️", desc: "Mod. Showers" },
+            82: { icon: "🌦️", desc: "Heavy Showers" },
+            85: { icon: "🌨️", desc: "Slight Snow Sh." },
+            86: { icon: "🌨️", desc: "Heavy Snow Sh." },
+            95: { icon: "⛈️", desc: "Thunderstorm" },
+          };
+
+          const w = iconMap[code] || { icon: "🌡️", desc: "Unknown" };
+          document.getElementById("weatherIcon").textContent = w.icon;
+          document.getElementById("weatherDesc").textContent = w.desc;
+        },
+      };
+
+      Dashboard.init();
+    </script>
+  </body>
+</html>
