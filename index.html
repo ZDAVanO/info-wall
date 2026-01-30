@@ -787,18 +787,22 @@
           document.getElementById("weatherCity").textContent = this.config.city;
           
           const iconMap = {
-            0: { icon: "☀️", desc: "Clear" },
-            1: { icon: "🌤️", desc: "Mainly Clear" },
-            2: { icon: "⛅", desc: "Partly Cloudy" },
-            3: { icon: "☁️", desc: "Overcast" },
+            0: { icon: "☀️",  desc: "Clear" },
+            1: { icon: "🌤️",  desc: "Mainly Clear" },
+            2: { icon: "⛅",  desc: "Partly Cloudy" },
+            3: { icon: "☁️",  desc: "Overcast" },
             45: { icon: "🌫️", desc: "Fog" },
             48: { icon: "🌫️", desc: "Dep. Rime Fog" },
             51: { icon: "🌦️", desc: "Light Drizzle" },
             53: { icon: "🌦️", desc: "Mod. Drizzle" },
             55: { icon: "🌦️", desc: "Dense Drizzle" },
+            56: { icon: "🌧️", desc: "Light Frz Drzl" },
+            57: { icon: "🌧️", desc: "Dense Frz Drzl" },
             61: { icon: "🌧️", desc: "Slight Rain" },
             63: { icon: "🌧️", desc: "Moderate Rain" },
             65: { icon: "🌧️", desc: "Heavy Rain" },
+            66: { icon: "🌧️", desc: "Light Frz Rain" },
+            67: { icon: "🌧️", desc: "Heavy Frz Rain" },
             71: { icon: "❄️", desc: "Slight Snow" },
             73: { icon: "❄️", desc: "Moderate Snow" },
             75: { icon: "❄️", desc: "Heavy Snow" },
@@ -809,6 +813,8 @@
             85: { icon: "🌨️", desc: "Slight Snow Sh." },
             86: { icon: "🌨️", desc: "Heavy Snow Sh." },
             95: { icon: "⛈️", desc: "Thunderstorm" },
+            96: { icon: "⛈️", desc: "Thun. + Hail" },
+            99: { icon: "⛈️", desc: "Thun. + Hv. Hail" },
           };
 
           const w = iconMap[code] || { icon: "🌡️", desc: "Unknown" };
