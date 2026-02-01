@@ -203,7 +203,7 @@
         align-items: center;
         gap: 0px;
         color: var(--text-secondary);
-        font-size: clamp(1rem, 2.5vw, 1.5rem);
+        font-size: 16px;
         font-weight: 600;
         opacity: 0.7;
         transition: opacity 0.5s;
@@ -217,6 +217,13 @@
         align-items: center;
         gap: 12px;
         z-index: 3000;
+      }
+
+      .sleep-button {
+        cursor: pointer;
+        opacity: 0.5;
+        font-size: 16px;
+        margin-top: -2px;
       }
 
       .calendar-section {
@@ -393,7 +400,7 @@
         width: 100vw;
         height: 100vh;
         background: #000;
-        z-index: 2000;
+        z-index: 4000;
         display: none;
         flex-direction: column;
         justify-content: center;
@@ -448,6 +455,7 @@
   
   
     <div class="status-container">
+      <div id="sleepButton" class="sleep-button" onclick="Dashboard.enterSleepMode()">🌙</div>
       <div id="batteryContainer" class="battery-container">
         <span id="batteryIcon"></span>
         <span id="batteryLevel">--%</span>
@@ -534,6 +542,7 @@
         weatherTimeout: null,
         sleepDismissedUntil: 0,
         debugSleep: false, // Встановіть false для роботи за розкладом (2:00-8:00)
+        manualSleep: false,
 
         config: {
           city: "Novoiavorivsk",
@@ -575,7 +584,10 @@
           }
 
           // Check Sleep Mode (2:00 - 8:00)
-          const isSleepTime = (h >= 2 && h < 8 || this.debugSleep) && Date.now() > this.sleepDismissedUntil;
+          const h28 = (h >= 2 && h < 8 || this.debugSleep);
+          const isSleepControlledByTime = h28 && Date.now() > this.sleepDismissedUntil;
+          const isSleepTime = isSleepControlledByTime || this.manualSleep;
+
           const sleepMode = document.getElementById("sleepMode");
           if (isSleepTime && sleepMode.style.display !== "flex") {
             sleepMode.style.display = "flex";
@@ -702,8 +714,14 @@
           }
         },
 
+        enterSleepMode() {
+          this.manualSleep = true;
+          this.update();
+        },
+
         dismissSleepMode() {
           // Dismiss sleep mode for 1 hour if tapped
+          this.manualSleep = false;
           this.sleepDismissedUntil = Date.now() + (60 * 60 * 1000);
           document.getElementById("sleepMode").style.display = "none";
         },
