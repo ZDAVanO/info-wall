@@ -14,6 +14,7 @@
       content="black-translucent"
     />
     <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="manifest.json" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -817,6 +818,16 @@
       };
 
       Dashboard.init();
+
+      // Register Service Worker
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((reg) => console.log("SW registered:", reg))
+            .catch((err) => console.log("SW reg error:", err));
+        });
+      }
     </script>
   </body>
 </html>
