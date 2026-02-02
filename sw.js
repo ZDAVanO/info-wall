@@ -1,5 +1,5 @@
 const CACHE_NAME = 'site-cache';
-const OFFLINE_URLS = ['./', 'index.html', 'manifest.json'];
+const OFFLINE_URLS = ['./', 'index.html', 'manifest.json', 'style.css', 'script.js'];
 
 // During installation, simply store the files
 self.addEventListener('install', (event) => {

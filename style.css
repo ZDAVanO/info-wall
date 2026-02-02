@@ -1,0 +1,398 @@
+:root {
+  --bg-color: #000000;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --accent: #b2a4ff;
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:
+    "Outfit",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-areas:
+    "top top top"
+    "widget extra calendar";
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 19vw 32vw;
+  gap: 0;
+  background: var(--bg-color);
+}
+
+.top-section {
+  grid-area: top;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 10;
+  border-bottom: 3px solid #1a1a1a;
+}
+
+.date-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+#clock {
+  margin-left: -6px;
+
+  font-family: "Inter", sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 30.5vw;
+  font-weight: 700;
+  line-height: 0.78;
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  transition: font-size 0.5s ease-in-out;
+}
+
+#clock.offline-clock {
+  font-size: 26.5vw;
+}
+
+#clock span {
+  font-family: "Inter", sans-serif;
+  letter-spacing: -1.5vw;
+}
+
+.clock-sep {
+  /* color: var(--accent); */
+  margin: 0 0;
+  position: relative;
+  top: -1vw; /* Adjust colon vertical position */
+  font-weight: 400;
+  /* opacity: 0.8; */
+}
+
+.widget-section {
+  grid-area: widget;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  overflow: hidden;
+}
+
+.extra-section {
+  grid-area: extra;
+  background: #000;
+  border-left: 3px solid #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0;
+}
+
+.map-frame-wrapper {
+  width: 100%;
+  height: 100%;
+  /* border-radius: 6px; */
+  overflow: hidden;
+  position: relative;
+  background: #000000;
+}
+
+.map-frame-wrapper iframe {
+  position: absolute;
+  /* Zoom effect */
+
+  transform-origin: top center;
+
+  width: 100%;
+  height: 100%;
+  left: 0;
+  /* top: -20px;
+  height: calc(100% + 20px); */
+  border: none;
+  pointer-events: auto;
+  filter: brightness(1) saturate(0.5);
+}
+
+#numeric-date {
+  font-family: "Inter", sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 47.2px;
+  font-weight: 600;
+  line-height: 0.9;
+  color: var(--text-primary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.battery-container {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.7;
+  transition: opacity 0.5s;
+}
+
+.status-container {
+  position: fixed;
+  top: 0px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 3000;
+}
+
+.sleep-button {
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 16px;
+  margin-top: -2px;
+}
+
+.calendar-section {
+  aspect-ratio: 1;
+  grid-area: calendar;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #000;
+  padding: 3px;
+  border-left: 3px solid #1a1a1a;
+}
+
+.month-name {
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 19.3px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 2.5px;
+  display: block;
+  text-align: right;
+}
+
+.calendar-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3.6px;
+  /* gap: 0; */
+  text-align: center;
+}
+
+.day-header {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 3.3px;
+}
+
+.day {
+  font-size: 19.2px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+}
+
+.day.other-month {
+  opacity: 0.35;
+}
+
+.day.weekend,
+.day.weekend.other-month {
+  /* color: var(--text-secondary); */
+
+  color: var(--accent);
+}
+
+.day.weekend.other-month {
+  /* color: var(--text-secondary); */
+  opacity: 0.51;
+}
+
+.day.today,
+.day.weekend.today {
+  color: var(--bg-color);
+  font-weight: 700;
+  z-index: 10;
+}
+
+.day.today::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--text-primary);
+  border-radius: 50%;
+  transform: scale(1.15);
+  z-index: -1;
+}
+
+.offline-message {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  opacity: 0.6;
+}
+
+.offline-message span {
+  font-size: 4vw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.offline-icon {
+  font-size: 6vw;
+}
+.weather-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5vh;
+  color: var(--text-primary);
+  text-align: center;
+  transition:
+    opacity 0.5s,
+    filter 0.5s;
+}
+
+.weather-city {
+  margin-top: 1.5vh;
+  font-size: 1.5vw;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.weather-icon {
+  /* margin-top: 1.5vh; */
+  padding: 6px;
+  font-size: 10vw;
+  line-height: 1;
+}
+
+.weather-temp {
+  margin-top: -0.5vh;
+  font-size: 8vw;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  line-height: 1;
+}
+
+.weather-desc {
+  margin-top: 0.8vh;
+  font-size: 2.4vw;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.weather-range {
+  margin-top: 5px;
+  font-size: 3.5vw;
+  font-weight: 600;
+  display: flex;
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+}
+
+.temp-max {
+  color: #f87171;
+}
+.temp-min {
+  color: #60a5fa;
+}
+
+/* Sleep Mode Styles */
+.sleep-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 4000;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sleep-clock {
+
+  margin-left: -9px;
+
+  font-family: "Inter", sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 38vw;
+  font-weight: 700;
+  line-height: 0.78; /* Match main clock */
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline; /* Match main clock */
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.sleep-clock span {
+  font-family: "Inter", sans-serif;
+  letter-spacing: -1.5vw; /* Match main clock */
+}
+
+.sleep-clock .clock-sep {
+  font-weight: 300;
+  position: relative;
+  top: -1.5vw;
+  /* opacity: 0.5; */
+  margin: 0 -0.5vw;
+}
