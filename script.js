@@ -4,7 +4,6 @@ const Dashboard = {
   lastMinutes: null,
   weatherTimeout: null,
   sleepDismissedUntil: 0,
-  debugSleep: false, // Встановіть false для роботи за розкладом (2:00-8:00)
   manualSleep: false,
 
   config: {
@@ -47,7 +46,7 @@ const Dashboard = {
     }
 
     // Check Sleep Mode (2:00 - 8:00)
-    const h28 = (h >= 2 && h < 8) || this.debugSleep;
+    const h28 = (h >= 2 && h < 8);
     const isSleepControlledByTime =
       h28 && Date.now() > this.sleepDismissedUntil;
     const isSleepTime = isSleepControlledByTime || this.manualSleep;
@@ -228,7 +227,6 @@ const Dashboard = {
     if (currentlyOnline) {
       weatherWidget.style.opacity = "1";
       weatherWidget.style.filter = "none";
-      clock.classList.remove("offline-clock");
 
       if (mapWrapper.style.display === "none") {
         mapWrapper.style.display = "block";
@@ -240,7 +238,6 @@ const Dashboard = {
     } else {
       weatherWidget.style.opacity = "0.4";
       weatherWidget.style.filter = "grayscale(1)";
-      clock.classList.add("offline-clock");
       mapWrapper.style.display = "none";
       offlineMessage.style.display = "flex";
     }
