@@ -14,6 +14,7 @@ const Dashboard = {
   },
 
   init() {
+    this.initWarmMode();
     this.initBattery();
     this.checkConnectivity();
     this.fetchWeather();
@@ -146,6 +147,18 @@ const Dashboard = {
       dayDiv.textContent = i;
       grid.appendChild(dayDiv);
     }
+  },
+
+  initWarmMode() {
+    const isWarm = localStorage.getItem("warmMode") === "true";
+    if (isWarm) {
+      document.body.classList.add("warm-mode");
+    }
+  },
+
+  toggleWarmMode() {
+    const isWarm = document.body.classList.toggle("warm-mode");
+    localStorage.setItem("warmMode", isWarm);
   },
 
   async initBattery() {
