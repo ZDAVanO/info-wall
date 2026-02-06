@@ -29,6 +29,7 @@ const Dashboard = {
 
     tick();
     setInterval(() => this.checkConnectivity(), 15000);
+    this.initMapToggle();
   },
 
   update() {
@@ -324,6 +325,27 @@ const Dashboard = {
     const w = iconMap[code] || { icon: "🌡️", desc: "Unknown" };
     document.getElementById("weatherIcon").textContent = w.icon;
     document.getElementById("weatherDesc").textContent = w.desc;
+  },
+
+  initMapToggle() {
+    const header = document.getElementById("widgetHeader");
+    const iframe = document.getElementById("mapIframe");
+
+    const modes = [
+      { name: "MINI", url: "https://alerts.in.ua/mini" },
+      { name: "LITE", url: "https://alerts.in.ua/lite" },
+      { name: "FULL", url: "https://alerts.in.ua/" },
+    ];
+
+    let currentModeIndex = 0;
+
+    header.addEventListener("click", () => {
+      currentModeIndex = (currentModeIndex + 1) % modes.length;
+      const mode = modes[currentModeIndex];
+      
+      iframe.src = mode.url;
+      header.textContent = mode.name;
+    });
   },
 };
 

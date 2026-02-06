@@ -130,6 +130,26 @@ body {
   overflow: hidden;
 }
 
+.widget-header {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1.2vw;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  z-index: 100;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.5;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .extra-section {
   grid-area: extra;
   background: #000;
