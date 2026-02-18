@@ -26,17 +26,31 @@ self.addEventListener('activate', (event) => {
 
 // Main logic: network request -> if error -> cache
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Skip caching for external real-time resources (Map and Weather API)
+  if (url.hostname.includes('alerts.in.ua') || url.hostname.includes('open-meteo.com')) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // If a response is received from the network, update the cache "on the fly"
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, response.clone());
+        // Only cache successful GET requests
+        if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
+        }
+
+        // Update the cache "on the fly"
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
         });
+        
+        return response;
       })
       .catch(() => {
-        // If the network is unavailable (fetch error), look in the cache
+        // If the network is unavailable, look in the cache
         return caches.match(event.request);
       })
   );

@@ -1,5 +1,10 @@
 
-
+img.emoji {
+  height: 1.1em; /* Slightly larger for Fluent details */
+  width: 1.1em;
+  margin: 0 0.1em;
+  vertical-align: -0.15em;
+}
 
 body.warm-mode::after {
   content: "";
@@ -183,6 +188,11 @@ body {
   border: none;
   pointer-events: auto;
   filter: brightness(1) saturate(0.5);
+}
+
+.map-frame-wrapper[data-mode="LITE"] iframe {
+  top: -55px;
+  height: calc(100% + 90px);
 }
 
 #numeric-date {

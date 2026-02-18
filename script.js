@@ -29,7 +29,22 @@ const Dashboard = {
 
     tick();
     setInterval(() => this.checkConnectivity(), 15000);
+    // Reload map every 30 minutes to prevent renderer crashes (frowny face icon)
+    setInterval(() => this.reloadMap(), 30 * 60 * 1000); 
     this.initMapToggle();
+  },
+
+  reloadMap() {
+    const iframe = document.getElementById("mapIframe");
+    if (iframe && navigator.onLine) {
+      console.log("Periodic map reload to prevent crashes");
+      const currentSrc = iframe.src;
+      // Using a temporary URL to force a hard reload of the iframe
+      iframe.src = "about:blank";
+      setTimeout(() => {
+        iframe.src = currentSrc;
+      }, 50);
+    }
   },
 
   update() {
@@ -246,7 +261,7 @@ const Dashboard = {
         mapWrapper.style.display = "block";
         offlineMessage.style.display = "none";
         // Reload iframe to ensure map is fresh
-        iframe.src = iframe.src;
+        this.reloadMap();
         this.fetchWeather();
       }
     } else {
@@ -330,6 +345,7 @@ const Dashboard = {
   initMapToggle() {
     const header = document.getElementById("widgetHeader");
     const iframe = document.getElementById("mapIframe");
+    const wrapper = document.getElementById("mapWrapper");
 
     const modes = [
       { name: "MINI", url: "https://alerts.in.ua/mini" },
@@ -338,6 +354,9 @@ const Dashboard = {
     ];
 
     let currentModeIndex = 0;
+    
+    // Set initial mode
+    wrapper.setAttribute("data-mode", modes[currentModeIndex].name);
 
     header.addEventListener("click", () => {
       currentModeIndex = (currentModeIndex + 1) % modes.length;
@@ -345,6 +364,7 @@ const Dashboard = {
       
       iframe.src = mode.url;
       header.textContent = mode.name;
+      wrapper.setAttribute("data-mode", mode.name);
     });
   },
 };
