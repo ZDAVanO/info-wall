@@ -446,3 +446,15 @@ body {
   /* opacity: 0.5; */
   margin: 0 -0.5vw;
 }
+
+.version-label {
+  position: fixed;
+  bottom: 0.5vh;
+  left: 0.5vw;
+  font-size: 1vw;
+  color: rgba(255, 255, 255, 0.15);
+  z-index: 5000;
+  pointer-events: none;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 1px;
+}

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'site-cache-v1.1';
+const CACHE_NAME = 'site-cache-v1.2';
 const OFFLINE_URLS = ['./', 'index.html', 'manifest.json', 'style.css', 'script.js'];
 
 // During installation, simply store the files

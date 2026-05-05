@@ -14,6 +14,7 @@ const Dashboard = {
   },
 
   init() {
+    this.initMapToggle();
     this.initWarmMode();
     this.initBattery();
     this.checkConnectivity();
@@ -31,7 +32,6 @@ const Dashboard = {
     setInterval(() => this.checkConnectivity(), 15000);
     // Reload map every 30 minutes to prevent renderer crashes (frowny face icon)
     setInterval(() => this.reloadMap(), 30 * 60 * 1000); 
-    this.initMapToggle();
   },
 
   reloadMap() {
@@ -353,18 +353,25 @@ const Dashboard = {
       { name: "FULL", url: "https://alerts.in.ua/" },
     ];
 
-    let currentModeIndex = 0;
-    
-    // Set initial mode
-    wrapper.setAttribute("data-mode", modes[currentModeIndex].name);
+    let currentModeIndex = parseInt(localStorage.getItem("mapModeIndex")) || 0;
+    if (currentModeIndex < 0 || currentModeIndex >= modes.length) {
+      currentModeIndex = 0;
+    }
 
-    header.addEventListener("click", () => {
-      currentModeIndex = (currentModeIndex + 1) % modes.length;
-      const mode = modes[currentModeIndex];
-      
+    const updateUI = (index) => {
+      const mode = modes[index];
       iframe.src = mode.url;
       header.textContent = mode.name;
       wrapper.setAttribute("data-mode", mode.name);
+      localStorage.setItem("mapModeIndex", index);
+    };
+
+    // Apply initial mode
+    updateUI(currentModeIndex);
+
+    header.addEventListener("click", () => {
+      currentModeIndex = (currentModeIndex + 1) % modes.length;
+      updateUI(currentModeIndex);
     });
   },
 };
