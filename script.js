@@ -62,10 +62,10 @@ const Dashboard = {
         `${pad(d)}.${pad(now.getMonth() + 1)}`;
     }
 
-    // Check Sleep Mode (2:00 - 8:00)
-    const h28 = (h >= 2 && h < 8);
+    // Check Sleep Mode (1:45 - 8:00)
+    const isSleepWindow = (h === 1 && m >= 45) || (h >= 2 && h < 8);
     const isSleepControlledByTime =
-      h28 && Date.now() > this.sleepDismissedUntil;
+      isSleepWindow && Date.now() > this.sleepDismissedUntil;
     const isSleepTime = isSleepControlledByTime || this.manualSleep;
 
     const sleepMode = document.getElementById("sleepMode");

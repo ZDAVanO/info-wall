@@ -33,6 +33,26 @@ body.warm-mode::after {
   --text-secondary: rgba(255, 255, 255, 0.6);
   --accent: #b2a4ff;
   --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Dashboard width unit (1% of 16:9 dashboard width) */
+  --dw: 1vw;
+  --dash-width: 100vw;
+}
+
+@media (min-aspect-ratio: 16/9) {
+  :root {
+    --dw: calc(16vh / 9);
+    --dash-width: calc(1600vh / 9);
+  }
+}
+
+@supports (height: 100dvh) {
+  @media (min-aspect-ratio: 16/9) {
+    :root {
+      --dw: calc(16dvh / 9);
+      --dash-width: calc(1600dvh / 9);
+    }
+  }
 }
 
 * {
@@ -57,9 +77,34 @@ body {
   height: 100vh;
   width: 100vw;
   display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
   padding: 0;
   margin: 0;
+}
+
+@supports (height: 100dvh) {
+  body {
+    height: 100dvh;
+  }
+}
+
+.dashboard-wrapper {
+  position: relative;
+  width: var(--dash-width);
+  max-width: 100vw;
+  height: 100%;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@supports (height: 100dvh) {
+  .dashboard-wrapper {
+    max-height: 100dvh;
+  }
 }
 
 .dashboard {
@@ -70,7 +115,7 @@ body {
     "top top top"
     "widget extra calendar";
   grid-template-rows: auto 1fr;
-  grid-template-columns: 1fr 19vw 32vw;
+  grid-template-columns: 1fr calc(19 * var(--dw)) calc(32 * var(--dw));
   gap: 0;
   background: var(--bg-color);
 }
@@ -99,7 +144,7 @@ body {
 
   font-family: "Inter", sans-serif;
   font-variant-numeric: tabular-nums;
-  font-size: 30.5vw;
+  font-size: calc(30.5 * var(--dw));
   font-weight: 700;
   line-height: 0.78;
   white-space: nowrap;
@@ -112,14 +157,14 @@ body {
 
 #clock span {
   font-family: "Inter", sans-serif;
-  letter-spacing: -1.5vw;
+  letter-spacing: calc(-1.5 * var(--dw));
 }
 
 .clock-sep {
   /* color: var(--accent); */
   margin: 0 0;
   position: relative;
-  top: -1vw; /* Adjust colon vertical position */
+  top: calc(-1 * var(--dw)); /* Adjust colon vertical position */
   font-weight: 400;
   /* opacity: 0.8; */
 }
@@ -143,7 +188,7 @@ body {
   backdrop-filter: blur(4px);
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 1.2vw;
+  font-size: calc(1.2 * var(--dw));
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -219,7 +264,7 @@ body {
 }
 
 .status-container {
-  position: fixed;
+  position: absolute;
   top: 0px;
   right: 4px;
   display: flex;
@@ -334,14 +379,14 @@ body {
 }
 
 .offline-message span {
-  font-size: 4vw;
+  font-size: calc(4 * var(--dw));
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
 .offline-icon {
-  font-size: 6vw;
+  font-size: calc(6 * var(--dw));
 }
 .weather-container {
   display: flex;
@@ -357,7 +402,7 @@ body {
 
 .weather-city {
   margin-top: 1.5vh;
-  font-size: 1.5vw;
+  font-size: calc(1.5 * var(--dw));
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -367,13 +412,13 @@ body {
 .weather-icon {
   /* margin-top: 1.5vh; */
   padding: 6px;
-  font-size: 10vw;
+  font-size: calc(10 * var(--dw));
   line-height: 1;
 }
 
 .weather-temp {
   margin-top: -0.5vh;
-  font-size: 8vw;
+  font-size: calc(8 * var(--dw));
   font-weight: 700;
   font-family: "Inter", sans-serif;
   line-height: 1;
@@ -381,14 +426,14 @@ body {
 
 .weather-desc {
   margin-top: 0.8vh;
-  font-size: 2.4vw;
+  font-size: calc(2.4 * var(--dw));
   color: var(--text-secondary);
   font-weight: 400;
 }
 
 .weather-range {
   margin-top: 5px;
-  font-size: 3.5vw;
+  font-size: calc(3.5 * var(--dw));
   font-weight: 600;
   display: flex;
   gap: 6px;
@@ -423,10 +468,12 @@ body {
 
   font-family: "Inter", sans-serif;
   font-variant-numeric: tabular-nums;
-  font-size: 38vw;
+  font-size: calc(38 * var(--dw));
   font-weight: 700;
   line-height: 0.78; /* Match main clock */
-  color: rgba(255, 255, 255, 0.5);
+  color: #000000;
+  -webkit-text-stroke: max(4px, calc(0.4 * var(--dw))) rgba(220, 38, 38, 0.6);
+  paint-order: stroke fill;
   white-space: nowrap;
   display: flex;
   align-items: baseline; /* Match main clock */
@@ -436,22 +483,21 @@ body {
 
 .sleep-clock span {
   font-family: "Inter", sans-serif;
-  letter-spacing: -1.5vw; /* Match main clock */
+  letter-spacing: calc(-1.5 * var(--dw)); /* Match main clock */
 }
 
 .sleep-clock .clock-sep {
   font-weight: 300;
   position: relative;
-  top: -1.5vw;
-  /* opacity: 0.5; */
-  margin: 0 -0.5vw;
+  top: calc(-1.5 * var(--dw));
+  margin: 0 calc(-0.5 * var(--dw));
 }
 
 .version-label {
-  position: fixed;
+  position: absolute;
   bottom: 0.5vh;
-  left: 0.5vw;
-  font-size: 1vw;
+  left: calc(0.5 * var(--dw));
+  font-size: calc(1 * var(--dw));
   color: rgba(255, 255, 255, 0.15);
   z-index: 5000;
   pointer-events: none;

@@ -39,77 +39,79 @@
       </div>
     </div>
 
-    <div class="status-container">
-      <div
-        id="warmButton"
-        class="warm-button"
-        onclick="Dashboard.toggleWarmMode()"
-      >
-        💡
-      </div>
-      <div
-        id="sleepButton"
-        class="sleep-button"
-        onclick="Dashboard.enterSleepMode()"
-      >
-        🌙
-      </div>
-      <div id="batteryContainer" class="battery-container">
-        <span id="batteryIcon"></span>
-        <span id="batteryLevel">--%</span>
-      </div>
-    </div>
-
-    <div class="dashboard">
-      <div class="top-section">
-        <div id="clock" class="clock" onclick="Dashboard.toggleFullscreen()">
-          <span id="hours">00</span>
-          <span class="clock-sep">:</span>
-          <span id="minutes">00</span>
+    <div class="dashboard-wrapper">
+      <div class="status-container">
+        <div
+          id="warmButton"
+          class="warm-button"
+          onclick="Dashboard.toggleWarmMode()"
+        >
+          💡
         </div>
-
-        <div class="date-section">
-          <span id="monthName" class="month-name">Month</span>
-          <div id="numeric-date">00.00</div>
+        <div
+          id="sleepButton"
+          class="sleep-button"
+          onclick="Dashboard.enterSleepMode()"
+        >
+          🌙
+        </div>
+        <div id="batteryContainer" class="battery-container">
+          <span id="batteryIcon"></span>
+          <span id="batteryLevel">--%</span>
         </div>
       </div>
 
-      <div class="widget-section">
-        <div id="offlineMessage" class="offline-message">
-          <div class="offline-icon">📡</div>
-          <span>no connection</span>
+      <div class="dashboard">
+        <div class="top-section">
+          <div id="clock" class="clock" onclick="Dashboard.toggleFullscreen()">
+            <span id="hours">00</span>
+            <span class="clock-sep">:</span>
+            <span id="minutes">00</span>
+          </div>
+
+          <div class="date-section">
+            <span id="monthName" class="month-name">Month</span>
+            <div id="numeric-date">00.00</div>
+          </div>
         </div>
 
-        <div id="mapWrapper" class="map-frame-wrapper">
-          <div id="widgetHeader" class="widget-header">MAP</div>
-          <iframe
-            id="mapIframe"
-            scrolling="no"
-          ></iframe>
-        </div>
-      </div>
+        <div class="widget-section">
+          <div id="offlineMessage" class="offline-message">
+            <div class="offline-icon">📡</div>
+            <span>no connection</span>
+          </div>
 
-      <div class="extra-section">
-        <div id="weather" class="weather-container">
-          <div id="weatherCity" class="weather-city">Novoiavorivsk</div>
-          <div id="weatherIcon" class="weather-icon">--</div>
-          <div id="weatherTemp" class="weather-temp">--°</div>
-          <div id="weatherDesc" class="weather-desc">-----</div>
-          <div class="weather-range">
-            <span id="weatherMax" class="temp-max">--°</span>
-            <span id="weatherMin" class="temp-min">--°</span>
+          <div id="mapWrapper" class="map-frame-wrapper">
+            <div id="widgetHeader" class="widget-header">MAP</div>
+            <iframe
+              id="mapIframe"
+              scrolling="no"
+            ></iframe>
+          </div>
+        </div>
+
+        <div class="extra-section">
+          <div id="weather" class="weather-container">
+            <div id="weatherCity" class="weather-city">Novoiavorivsk</div>
+            <div id="weatherIcon" class="weather-icon">--</div>
+            <div id="weatherTemp" class="weather-temp">--°</div>
+            <div id="weatherDesc" class="weather-desc">-----</div>
+            <div class="weather-range">
+              <span id="weatherMax" class="temp-max">--°</span>
+              <span id="weatherMin" class="temp-min">--°</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="calendar-section">
+          <div class="calendar">
+            <div id="calendarGrid" class="calendar-grid"></div>
           </div>
         </div>
       </div>
 
-      <div class="calendar-section">
-        <div class="calendar">
-          <div id="calendarGrid" class="calendar-grid"></div>
-        </div>
-      </div>
+      <div class="version-label">v1.2</div>
     </div>
-
-    <div class="version-label">v1.2</div>
     <script src="script.js" defer></script>
   </body>
 </html>
