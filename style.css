@@ -240,6 +240,87 @@ body {
   height: calc(100% + 90px);
 }
 
+.vector-map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  box-sizing: border-box;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.vector-map-container svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.vector-map-container path {
+  fill: #191c20;
+  stroke: #0a0a0c;
+  stroke-width: 1.5;
+  transition: fill 0.4s ease, filter 0.4s ease;
+}
+
+.vector-map-container path.alert-red {
+  fill: #8e3838 !important;
+}
+
+.vector-map-container path.alert-yellow {
+  fill: #8a6c29 !important;
+}
+
+.vector-map-container .map-label {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  fill: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  pointer-events: none;
+  transition: fill 0.3s ease;
+}
+
+.vector-map-container .map-label.alert-active {
+  fill: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+}
+
+/* Home region subtle indicator (Lviv oblast, uid 27) */
+.vector-map-container path[data-uid="27"]:not(.alert-red):not(.alert-yellow) {
+  fill: #252a32;
+  stroke: #333d4b;
+}
+
+/* Warm mode integration */
+body.warm-mode .vector-map-container {
+  background: #110e0c;
+}
+
+body.warm-mode .vector-map-container path {
+  fill: #221b16;
+  stroke: #15110d;
+}
+
+body.warm-mode .vector-map-container path[data-uid="27"]:not(.alert-red):not(.alert-yellow) {
+  fill: #2f251d;
+  stroke: #453629;
+}
+
+body.warm-mode .vector-map-container path.alert-red {
+  fill: #7d332a !important;
+}
+
+body.warm-mode .vector-map-container path.alert-yellow {
+  fill: #7a5e24 !important;
+}
+
 #numeric-date {
   font-family: "Inter", sans-serif;
   font-variant-numeric: tabular-nums;

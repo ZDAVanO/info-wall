@@ -1,4 +1,4 @@
-const CACHE_NAME = 'site-cache-v1.2';
+const CACHE_NAME = 'site-cache-v1.3';
 const OFFLINE_URLS = ['./', 'index.html', 'manifest.json', 'style.css', 'script.js'];
 
 // During installation, simply store the files
@@ -29,7 +29,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   
   // Skip caching for external real-time resources (Map and Weather API)
-  if (url.hostname.includes('alerts.in.ua') || url.hostname.includes('open-meteo.com')) {
+  if (url.hostname.includes('alerts.in.ua') || url.hostname.includes('neptun.in.ua') || url.hostname.includes('open-meteo.com')) {
     return;
   }
 

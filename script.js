@@ -15,6 +15,8 @@ const Dashboard = {
 
   init() {
     this.initMapToggle();
+    this.initVectorAlerts();
+
     this.initWarmMode();
     this.initBattery();
     this.checkConnectivity();
@@ -36,7 +38,7 @@ const Dashboard = {
 
   reloadMap() {
     const iframe = document.getElementById("mapIframe");
-    if (iframe && navigator.onLine) {
+    if (iframe && navigator.onLine && iframe.style.display !== "none") {
       console.log("Periodic map reload to prevent crashes");
       const currentSrc = iframe.src;
       // Using a temporary URL to force a hard reload of the iframe
@@ -346,8 +348,10 @@ const Dashboard = {
     const header = document.getElementById("widgetHeader");
     const iframe = document.getElementById("mapIframe");
     const wrapper = document.getElementById("mapWrapper");
+    const vectorContainer = document.getElementById("vectorMapContainer");
 
     const modes = [
+      { name: "VECTOR", type: "vector" },
       { name: "MINI", url: "https://alerts.in.ua/mini" },
       { name: "LITE", url: "https://alerts.in.ua/lite" },
       { name: "FULL", url: "https://alerts.in.ua/" },
@@ -360,10 +364,30 @@ const Dashboard = {
 
     const updateUI = (index) => {
       const mode = modes[index];
-      iframe.src = mode.url;
       header.textContent = mode.name;
       wrapper.setAttribute("data-mode", mode.name);
       localStorage.setItem("mapModeIndex", index);
+
+      if (mode.type === "vector") {
+        if (iframe) {
+          iframe.style.display = "none";
+          if (iframe.src !== "about:blank") {
+            iframe.src = "about:blank";
+          }
+        }
+        if (vectorContainer) {
+          vectorContainer.style.display = "flex";
+        }
+        this.fetchVectorAlerts();
+      } else {
+        if (vectorContainer) {
+          vectorContainer.style.display = "none";
+        }
+        if (iframe) {
+          iframe.style.display = "block";
+          iframe.src = mode.url;
+        }
+      }
     };
 
     // Apply initial mode
@@ -372,6 +396,86 @@ const Dashboard = {
     header.addEventListener("click", () => {
       currentModeIndex = (currentModeIndex + 1) % modes.length;
       updateUI(currentModeIndex);
+    });
+  },
+
+  initVectorAlerts() {
+    this.fetchVectorAlerts();
+    // Periodically update vector alerts every 15 seconds
+    setInterval(() => {
+      const modes = ["VECTOR", "MINI", "LITE", "FULL"];
+      const modeIndex = parseInt(localStorage.getItem("mapModeIndex")) || 0;
+      if (modes[modeIndex] === "VECTOR" && navigator.onLine) {
+        this.fetchVectorAlerts();
+      }
+    }, 15000);
+  },
+
+  async fetchVectorAlerts() {
+    const container = document.getElementById("vectorMapContainer");
+    if (!container || !navigator.onLine) return;
+
+    try {
+      const signal = AbortSignal.timeout ? AbortSignal.timeout(6000) : null;
+      const res = await fetch("https://neptun.in.ua/api/v1/alerts", { signal });
+      if (!res.ok) return;
+      const data = await res.json();
+      this.updateVectorAlerts(data);
+    } catch (e) {
+      console.warn("Vector alerts fetch failed:", e);
+    }
+  },
+
+  updateVectorAlerts(data) {
+    const container = document.getElementById("vectorMapContainer");
+    if (!container) return;
+
+    const rootMap = {
+      3: "хмельниц", 4: "вінниц", 5: "рівнен", 8: "волин", 9: "дніпро",
+      10: "житомир", 11: "закарпат", 12: "запоріз", 13: "івано-франків",
+      14: "київськ", 15: "кіровоград", 16: "луган", 17: "миколаїв",
+      18: "одес", 19: "полтав", 20: "сум", 21: "терноп", 22: "харків",
+      23: "херсон", 24: "черкас", 25: "чернігів", 26: "чернівец",
+      27: "львів", 28: "донець", 29: "крим", 30: "севастопол", 31: "м. київ"
+    };
+
+    const uidAlerts = {};
+    const processItem = (name, level) => {
+      if (!name) return;
+      const lower = name.toLowerCase();
+      if (lower === "м. київ" || lower === "київ") {
+        uidAlerts[31] = level || "red";
+        return;
+      }
+      for (const [uid, root] of Object.entries(rootMap)) {
+        if (lower.includes(root)) {
+          const current = uidAlerts[uid];
+          if (level === "red" || current === "red") {
+            uidAlerts[uid] = "red";
+          } else if (!current || current === "yellow") {
+            uidAlerts[uid] = level || "yellow";
+          }
+          break;
+        }
+      }
+    };
+
+    (data.oblasts || []).forEach(o => processItem(o.name || o.oblast || o.key, o.level));
+    (data.raions || []).forEach(r => processItem(r.oblast || r.name || r.key, r.level));
+
+    container.querySelectorAll("path[data-uid]").forEach(p => {
+      const uid = p.getAttribute("data-uid");
+      const lvl = uidAlerts[uid];
+      p.classList.remove("alert-red", "alert-yellow");
+      if (lvl === "red") p.classList.add("alert-red");
+      else if (lvl === "yellow") p.classList.add("alert-yellow");
+    });
+
+    container.querySelectorAll(".map-label[data-uid]").forEach(lbl => {
+      const uid = lbl.getAttribute("data-uid");
+      const lvl = uidAlerts[uid];
+      if (lvl) lbl.classList.add("alert-active");
+      else lbl.classList.remove("alert-active");
     });
   },
 };
