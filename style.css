@@ -264,14 +264,14 @@ body {
 }
 
 .vector-map-container path {
-  fill: #191c20;
-  stroke: #0a0a0c;
+  fill: #272c34;
+  stroke: #121519;
   stroke-width: 1.5;
   transition: fill 0.4s ease, filter 0.4s ease;
 }
 
 .vector-map-container path.alert-red {
-  fill: #8e3838 !important;
+  fill: #823c3c !important;
 }
 
 .vector-map-container path.alert-yellow {
@@ -294,8 +294,8 @@ body {
 
 /* Home region subtle indicator (Lviv oblast, uid 27) */
 .vector-map-container path[data-uid="27"]:not(.alert-red):not(.alert-yellow) {
-  fill: #252a32;
-  stroke: #333d4b;
+  fill: #323944;
+  stroke: #455263;
 }
 
 /* Warm mode integration */
@@ -304,17 +304,17 @@ body.warm-mode .vector-map-container {
 }
 
 body.warm-mode .vector-map-container path {
-  fill: #221b16;
-  stroke: #15110d;
+  fill: #2f2620;
+  stroke: #191410;
 }
 
 body.warm-mode .vector-map-container path[data-uid="27"]:not(.alert-red):not(.alert-yellow) {
-  fill: #2f251d;
-  stroke: #453629;
+  fill: #3c3026;
+  stroke: #584433;
 }
 
 body.warm-mode .vector-map-container path.alert-red {
-  fill: #7d332a !important;
+  fill: #743b34 !important;
 }
 
 body.warm-mode .vector-map-container path.alert-yellow {
